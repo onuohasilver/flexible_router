@@ -1,25 +1,11 @@
 import 'dart:ui';
 
-import 'package:afrolearn/src/components/widgetContainer/debugger.dart';
-import 'package:afrolearn/src/components/widgetContainer/progressOverlay.dart';
-import 'package:afrolearn/src/components/widgetContainer/topBarRow.dart';
-import 'package:afrolearn/src/core/constants.dart';
-import 'package:afrolearn/src/core/utilities/pageRoutes.dart';
-import 'package:afrolearn/src/core/utilities/sizing.dart';
-import 'package:afrolearn/src/customFunctions/generic/checkConnectivity.dart';
-import 'package:afrolearn/src/customFunctions/generic/nightModeSwitcher.dart';
-import 'package:afrolearn/src/customFunctions/generic/showExitModal.dart';
-import 'package:afrolearn/src/customFunctions/streak/updateTimeSpent.dart';
-import 'package:afrolearn/src/handlers/stateHandlers/providerHandlers/course.dart';
-import 'package:afrolearn/src/handlers/stateHandlers/providerHandlers/generic.dart';
-import 'package:afrolearn/src/handlers/stateHandlers/providerHandlers/routeWatcher.dart';
-import 'package:afrolearn/src/handlers/stateHandlers/providerHandlers/theming.dart';
-import 'package:animate_do/animate_do.dart';
+import 'package:baserouter/baseclass/progressOverlay.dart';
+import 'package:baserouter/baseclass/routehandler.dart';
+import 'package:baserouter/baseclass/sizeReference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
-
-import 'bottomBar.dart';
 
 ///Entry point for the app
 class BaseContainer extends StatefulWidget {
@@ -53,30 +39,12 @@ class BaseContainer extends StatefulWidget {
   ///Whenever the User gets to any of these screens,
   ///navigating to a  previous screen is prohibited
 
-  static final prohibited = [
-    PageMap.gameLanding,
-    PageMap.profile,
-    PageMap.community,
-    PageMap.notifications,
-    PageMap.store,
-    PageMap.flashCards,
-  ];
+  static final prohibited = [];
 
   ///These screens are for exercises and should trigger
   ///a modal popUp to inform user that the current progress
   ///would be lost if the screen is exited
-  static final exerciseScreens = [
-    PageMap.chooseMissingWord,
-    PageMap.completeThisSentence,
-    PageMap.translateThisSentence,
-    PageMap.explanation,
-    PageMap.lessonTip,
-    PageMap.trueOrFalse,
-    PageMap.tapWhatYouHear,
-    PageMap.selectCorrectTranslation,
-    PageMap.flipSelect,
-    PageMap.identifyWhatYouSee
-  ];
+  static final exerciseScreens = [];
 
   @override
   _BaseContainerState createState() => _BaseContainerState();
@@ -85,17 +53,6 @@ class BaseContainer extends StatefulWidget {
 class _BaseContainerState extends State<BaseContainer>
     with WidgetsBindingObserver {
   ///Checks if the app has been exited
-  @override
-  didChangeAppLifecycleState(AppLifecycleState state) {
-    if ([
-      AppLifecycleState.inactive,
-      AppLifecycleState.detached,
-      AppLifecycleState.inactive,
-      AppLifecycleState.paused
-    ].contains(state)) {
-      updateTimeSpentOnApp(context);
-    }
-  }
 
   @override
   void initState() {
@@ -120,9 +77,6 @@ class _BaseContainerState extends State<BaseContainer>
   Widget build(BuildContext context) {
     SizeReference size = SizeReference(context);
     RouteWatcher routeWatcher = Provider.of<RouteWatcher>(context);
-    CourseProvider courseProvider = Provider.of<CourseProvider>(context);
-    ThemeProvider customColor = Provider.of<ThemeProvider>(context);
-    Generic generic = Provider.of<Generic>(context);
 
     return WillPopScope(
       onWillPop: () async {
@@ -132,7 +86,7 @@ class _BaseContainerState extends State<BaseContainer>
         } else {
           if (BaseContainer.exerciseScreens
               .contains(routeWatcher.currentScreen)) {
-            exerciseExitModal(context);
+            // exerciseExitModal(context);
             return false;
           }
           routeWatcher.previousScreen();
@@ -147,34 +101,20 @@ class _BaseContainerState extends State<BaseContainer>
               duration: Duration(milliseconds: 300),
               height: size.height,
               width: size.width,
-              color: customColor.lightGreyToBlack,
-              child: !generic.hasInternet
-                  ? Center(
-                      child: Text('No Internet'),
-                    )
-                  : Stack(
-                      children: [
-                        !routeWatcher.currentOptions.animate
-                            ? Padding(
-                                padding:
-                                    routeWatcher.optionsHistory.last.padding ??
-                                        EdgeInsets.zero,
-                                child: routeWatcher.currentScreen,
-                              )
-                            : SlideInRight(
-                                key: Key(courseProvider.counter.toString()),
-                                child: Padding(
-                                  padding: routeWatcher
-                                          .optionsHistory.last.padding ??
-                                      EdgeInsets.zero,
-                                  child: routeWatcher.currentScreen,
-                                ),
-                              ),
-                        CustomBottomBarRow(),
-                        DebuggerView(),
-                        TopBarRow()
-                      ],
-                    ),
+              color: Colors.white,
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: routeWatcher.optionsHistory.last.padding ??
+                        EdgeInsets.zero,
+                    child: routeWatcher.currentScreen,
+                  )
+
+                  // CustomBottomBarRow(),
+                  // DebuggerView(),
+                  // TopBarRow()
+                ],
+              ),
             ),
           ),
         ),
@@ -187,8 +127,8 @@ class BaseContainerOptions {
   ///This dictates how each screen is going to be displayed
   ///Controls the minor details like the color, topBar, bottomBar and others
   const BaseContainerOptions(
-      {this.bottomBarColor = AppColors.pink,
-      this.color = AppColors.pink,
+      {this.bottomBarColor = Colors.pink,
+      this.color = Colors.pink,
       this.showBottomBar = false,
       this.padding = EdgeInsets.zero,
       this.showTopBar = false,
@@ -208,7 +148,7 @@ class BaseContainerOptions {
       showTopBar: true,
       allowDebugging: true,
       animate: true,
-      backgroundColor: AppColors.pink.withOpacity(.14),
+      backgroundColor: Colors.pink.withOpacity(.14),
       padding: EdgeInsets.zero);
 
   ///Returns a [String] representation of the object
@@ -235,9 +175,9 @@ class BaseContainerOptions {
         showTopBar: showTopBar,
         allowDebugging: allowDebugging,
         animate: animate,
-        backgroundColor: AppColors.pink.withOpacity(.14),
+        backgroundColor: Colors.pink.withOpacity(.14),
         padding: padding);
-  } 
+  }
 
   ///`BaseContainerOptions.copyWith` has been [deprecated]
   ///use `BaseContainerOptions.defaultSetup` instead.
