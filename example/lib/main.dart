@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:baserouter/baserouter.dart';
+import 'package:example/second_screen.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,10 +12,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter   Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: BaseContainer(),
+      home: BaseContainerEntry(
+          entry: MyHomePage(
+        title: 'Sas',
+      )),
     );
   }
 }
@@ -58,7 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () => {
+          route(context).addToStack(Second()),
+          bridge(context).load('First Data', 'Saaftal', String)
+        },
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),

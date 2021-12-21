@@ -5,6 +5,6 @@ class ProgressOverlay extends StatelessWidget {
   final Widget child;
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(child: child);
   }
 }

@@ -5,16 +5,14 @@ import 'basecontainerOptions.dart';
 
 class RouteWatcher extends ChangeNotifier {
   ///A stack of the navigated screens
-  List<Widget> screenViewHistory = [PageMap.initialLoading];
+  List<Widget> screenViewHistory = [];
 
   /// dynamic arguments parsEed between screens. it is similar to the [ModalRoute.settings] feature
   dynamic routeArguments;
 
   ///A stack of the base options parsed to the the navigated screens
   ///it must always remain equal to the [screenViewHistory]
-  List<BaseContainerOptions> optionsHistory = [
-    BaseContainerOptions.defaultSetup
-  ];
+  List<BaseContainerOptions> optionsHistory = [];
 
   ///Option is parsed to a [BaseContainer] to determine how it is
   ///rendered

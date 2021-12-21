@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:baserouter/baseclass/progressOverlay.dart';
 import 'package:baserouter/baseclass/routehandler.dart';
 import 'package:baserouter/baseclass/sizeReference.dart';
+import 'package:baserouter/methods.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 ///Entry point for the app
@@ -27,12 +27,12 @@ class BaseContainer extends StatefulWidget {
   ///```
   ///
   ///This example shows a simple method to navigate to Profile Screen
-  const BaseContainer({
-    Key? key,
-    this.scaffoldKey,
-  }) : super(key: key);
+  const BaseContainer({Key? key, this.scaffoldKey, required this.child})
+      : super(key: key);
 
   final GlobalKey<ScaffoldState>? scaffoldKey;
+
+  final Widget child;
 
   ///Screens where navigation is not allowed.
   ///Such screen are the dashboard view screens
@@ -77,21 +77,19 @@ class _BaseContainerState extends State<BaseContainer>
   Widget build(BuildContext context) {
     SizeReference size = SizeReference(context);
     RouteWatcher routeWatcher = Provider.of<RouteWatcher>(context);
+    if (routeWatcher.optionsHistory.isEmpty)
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        route(context).addToStack(widget.child);
+      });
 
     return WillPopScope(
       onWillPop: () async {
         ///This refuses backward navigation for the prohibited screens
         if (BaseContainer.prohibited.contains(routeWatcher.currentScreen)) {
           return false;
-        } else {
-          if (BaseContainer.exerciseScreens
-              .contains(routeWatcher.currentScreen)) {
-            // exerciseExitModal(context);
-            return false;
-          }
-          routeWatcher.previousScreen();
-          return false;
         }
+        routeWatcher.previousScreen();
+        return false;
       },
       child: Scaffold(
         key: widget.scaffoldKey,
@@ -104,11 +102,9 @@ class _BaseContainerState extends State<BaseContainer>
               color: Colors.white,
               child: Stack(
                 children: [
-                  Padding(
-                    padding: routeWatcher.optionsHistory.last.padding ??
-                        EdgeInsets.zero,
-                    child: routeWatcher.currentScreen,
-                  )
+                  routeWatcher.optionsHistory.isNotEmpty
+                      ? routeWatcher.currentScreen
+                      : widget.child
 
                   // CustomBottomBarRow(),
                   // DebuggerView(),
