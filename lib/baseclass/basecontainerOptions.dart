@@ -82,35 +82,25 @@ class _BaseContainerState extends State<BaseContainer>
         route(context).addToStack(widget.child);
       });
 
-    return WillPopScope(
-      onWillPop: () async {
-        ///This refuses backward navigation for the prohibited screens
-        if (BaseContainer.prohibited.contains(routeWatcher.currentScreen)) {
-          return false;
-        }
-        routeWatcher.previousScreen();
-        return false;
-      },
-      child: Scaffold(
-        key: widget.scaffoldKey,
-        body: SingleChildScrollView(
-          child: ProgressOverlay(
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 300),
-              height: size.height,
-              width: size.width,
-              color: Colors.white,
-              child: Stack(
-                children: [
-                  routeWatcher.optionsHistory.isNotEmpty
-                      ? routeWatcher.currentScreen
-                      : widget.child
+    return Scaffold(
+      key: widget.scaffoldKey,
+      body: SingleChildScrollView(
+        child: ProgressOverlay(
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            height: size.height,
+            width: size.width,
+            color: Colors.white,
+            child: Stack(
+              children: [
+                routeWatcher.optionsHistory.isNotEmpty
+                    ? routeWatcher.currentScreen
+                    : widget.child
 
-                  // CustomBottomBarRow(),
-                  // DebuggerView(),
-                  // TopBarRow()
-                ],
-              ),
+                // CustomBottomBarRow(),
+                // DebuggerView(),
+                // TopBarRow()
+              ],
             ),
           ),
         ),

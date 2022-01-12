@@ -1,8 +1,7 @@
 name: baserouter
-description: A layered routing package for flutter apps.
-version: 0.0.1
-author:
-homepage:
+description: A layered routing package and general mini-state carrier for flutter apps.
+version: 0.0.2
+homepage: https://github.com/onuohasilver/flexible_router
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
@@ -12,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.0
-  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

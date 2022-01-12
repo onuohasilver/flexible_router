@@ -20,6 +20,8 @@ class BridgeBase extends ChangeNotifier {
     notifyListeners();
   }
 
+  
+
   BridgeModel read(String name, dynamic initial) {
     if (data.containsKey(name)) {
       return BridgeModel(data[name]['slice'], data[name]['type']);
